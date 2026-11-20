@@ -122,3 +122,52 @@ export function basicErrors(row, photos) {
   if (photos.length > 20) e.push(`${photos.length} photos — Vinted allows 20`);
   return e;
 }
+
+// ---------- zip import ----------
+// Reads a .zip (e.g. from the companion phone app, or one made in Finder) into
+// the same [{ path, file }] shape the folder picker gives. Supports stored and
+// deflated entries; skips folders and macOS junk (__MACOSX, .DS_Store).
+export async function unzipFiles(input) {
+  const buf = input instanceof Uint8Array ? input : new Uint8Array(input instanceof ArrayBuffer ? input : await input.arrayBuffer());
+  const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= Math.max(0, buf.length - 22 - 65535); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("That file isn't a valid zip");
+  const count = dv.getUint16(eocd + 10, true);
+  let p = dv.getUint32(eocd + 16, true);
+  const dec = new TextDecoder();
+  const out = [];
+  for (let n = 0; n < count; n++) {
+    if (dv.getUint32(p, true) !== 0x02014b50) throw new Error('Zip directory is damaged');
+    const method = dv.getUint16(p + 10, true);
+    const size = dv.getUint32(p + 20, true);
+    const nameLen = dv.getUint16(p + 28, true), extraLen = dv.getUint16(p + 30, true), commentLen = dv.getUint16(p + 32, true);
+    const local = dv.getUint32(p + 42, true);
+    const path = dec.decode(buf.subarray(p + 46, p + 46 + nameLen));
+    p += 46 + nameLen + extraLen + commentLen;
+    const name = path.split('/').pop();
+    if (path.endsWith('/') || /(^|\/)__MACOSX\//.test(path) || name === '.DS_Store' || name.startsWith('._')) continue;
+    const start = local + 30 + dv.getUint16(local + 26, true) + dv.getUint16(local + 28, true);
+    const raw = buf.slice(start, start + size);
+    let data;
+    if (method === 0) data = raw;
+    else if (method === 8) data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+    else throw new Error(`${path}: unsupported zip compression (method ${method})`);
+    const type = /\.jpe?g$/i.test(name) ? 'image/jpeg' : /\.png$/i.test(name) ? 'image/png' : /\.webp$/i.test(name) ? 'image/webp' : /\.csv$/i.test(name) ? 'text/csv' : '';
+    out.push({ path, file: new File([data], name, { type }) });
+  }
+  return out;
+}
+
+// Rows back to CSV (for "Save CSV" after editing in the preview). Same format the
+// parser reads: BOM so Excel gets the £ right, CRLF, quotes only where needed.
+export function toCSV(rows, columns = [...COLUMNS, 'notes']) {
+  const q = (v) => { const s = String(v ?? ''); return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  return '﻿' + [columns.join(','), ...rows.map((r) => columns.map((c) => q(r[c])).join(','))].join('\r\n') + '\r\n';
+}
+
+// Does this row still have blanks Claude could fill? (brand and size may
+// legitimately stay empty, so they don't count.)
+export const needsDraft = (row) => ['title', 'description', 'category', 'condition', 'colour'].some((k) => !String(row[k] ?? '').trim());

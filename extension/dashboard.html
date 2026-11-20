@@ -36,6 +36,7 @@
       <button data-filter="all" class="chip on">All active</button>
       <button data-filter="stale" class="chip">Underperforming</button>
       <button data-filter="other" class="chip">Hidden / reserved</button>
+      <button data-filter="drafts" class="chip" id="draftsChip">Drafts</button>
     </div>
     <input id="search" type="search" placeholder="Search titles…" />
   </section>
@@ -74,7 +75,7 @@
     <section class="upload-intro">
       <div>
         <h2>Bulk upload as drafts</h2>
-        <p class="note">Choose one folder that contains <code>items.csv</code> and a sub-folder of photos for each item. Items are saved as <b>drafts</b>. You review and publish them in the Vinted app.</p>
+        <p class="note">Choose the <b>zip</b> from the companion phone app, or one folder that contains <code>items.csv</code> and a sub-folder of photos for each item. You can also drag either onto this panel. Items are saved as <b>drafts</b>. You review and publish them in the Vinted app.</p>
         <pre class="tree">my-items/
 ├── items.csv
 ├── levi-jeans/   1.jpg 2.jpg 3.jpg
@@ -82,6 +83,10 @@
       </div>
       <div class="upload-actions">
         <label class="pick">
+          <input type="file" id="zipInput" accept=".zip,application/zip" hidden />
+          <span>Choose zip…</span>
+        </label>
+        <label class="pick alt">
           <input type="file" id="folderInput" webkitdirectory multiple hidden />
           <span>Choose folder…</span>
         </label>
@@ -90,14 +95,17 @@
     </section>
     <section id="uploadSummary" class="upload-summary" hidden>
       <span id="uploadCounts"></span>
-      <button id="recheckBtn" class="ghost">Re-pick folder</button>
+      <button id="recheckBtn" class="ghost">Pick again</button>
+      <button id="saveCsvBtn" class="ghost" title="Download items.csv with your edits">Save CSV</button>
+      <button id="draftBtn" class="ai" title="Fill every item's blank fields from its photos and notes">✨ Draft all with Claude</button>
       <button id="uploadBtn">Upload ready items as drafts</button>
     </section>
     <div class="tablewrap" id="previewWrap" hidden>
       <table>
-        <thead><tr><th>Row</th><th>Photos</th><th>Title</th><th class="num">Price</th><th>Category</th><th>Brand</th><th>Size</th><th>Condition</th><th>Colour</th><th>Parcel</th><th>Status</th></tr></thead>
+        <thead><tr><th>Row</th><th>Photos</th><th>Title &amp; description</th><th class="num">Price</th><th>Category</th><th>Brand</th><th>Size</th><th>Condition</th><th>Colour</th><th>Parcel</th><th>Status</th></tr></thead>
         <tbody id="previewRows"></tbody>
       </table>
+      <div id="previewLists"></div>
     </div>
   </main>
 

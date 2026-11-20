@@ -30,8 +30,19 @@ A dashboard for your vinted.co.uk wardrobe. It flags underperforming items and l
    ├── levi-jeans/    1.jpg 2.jpg 3.jpg   ← photos upload in file-name order
    └── nike-air-max/  1.jpg 2.jpg
    ```
-3. Click **Choose folder…** and pick `my-items`. The preview shows each row as **Ready**, or highlights in red what needs fixing.
-4. Click **Upload N as drafts**. Then review and publish the drafts in the Vinted app.
+3. Click **Choose folder…** and pick `my-items` (or **Choose zip…** for a zip from the companion app; you can also drag either onto the panel). The preview shows each row as **Ready**, or highlights in red what needs fixing.
+4. Fix anything in red straight in the preview: every cell is editable, and category, size and colour suggest Vinted's own options as you type. **Save CSV** downloads your edited `items.csv`.
+5. Click **Upload N as drafts**. Then review and publish the drafts in the Vinted app.
+
+### Claude drafting
+
+**✨ Draft all with Claude** looks at each item's first four photos and its notes, then fills the blank title, description, category, brand, size, condition, colour and parcel size. It never overwrites anything you typed, and it never sets the price. Each row also has its own **✨ Draft** button.
+
+Set it up under **Settings**:
+- **Anthropic API key**: create one at [console.anthropic.com](https://console.anthropic.com/settings/keys). Usage is billed to your Anthropic account. The key is stored only in this browser and only sent to `api.anthropic.com`.
+- **Model**: Claude Haiku 5.5 (the default, well under 1p per item), Sonnet 5.5, or Opus 5.5 for the best descriptions. One key works with all three.
+
+The Activity log shows what each item cost. Always check the drafts before uploading: Claude can misread labels or pick a near-miss category.
 
 | Column | Required | Example | Notes |
 |---|---|---|---|

@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Vinted Manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Dashboard, bulk delete, bulk price change and relist for your Vinted wardrobe.",
   "permissions": ["scripting", "storage", "tabs"],
-  "host_permissions": ["https://www.vinted.co.uk/*"],
+  "host_permissions": ["https://www.vinted.co.uk/*", "https://api.anthropic.com/*"],
   "background": { "service_worker": "background.js" },
   "action": { "default_title": "Open Vinted Manager", "default_icon": "icons/icon128.png" },
   "icons": { "128": "icons/icon128.png" }

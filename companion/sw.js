@@ -1,6 +1,6 @@
 // Offline support: network first (so updates show up straight away),
 // falling back to the cached copy when there's no signal.
-const CACHE = 'companion-v1';
+const CACHE = 'companion-v2';
 const SHELL = [
   './', 'index.html', 'app.css', 'app.js', 'manifest.webmanifest',
   'lib/batch.js', 'lib/zip.js', 'lib/store.js', 'lib/image.js',

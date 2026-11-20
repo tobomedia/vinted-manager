@@ -6,6 +6,8 @@ export const DEFAULT_SETTINGS = {
   delayMinSec: 20,
   delayMaxSec: 45,
   dryRun: true,
+  aiKey: '',
+  aiModel: 'claude-haiku-5-5',
 };
 
 const DAY = 86400000;

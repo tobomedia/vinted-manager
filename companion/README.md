@@ -8,7 +8,7 @@ Photograph items on your phone, jot down what you know, then export everything a
 1. **New item** → take photos or choose them from your library. Tap a photo to reorder or remove it (the first one is the cover).
 2. Add whatever you know: price, condition, brand, size, notes. Everything except photos is optional. Items save automatically.
 3. **Export** → **Create zip** → **Share zip…** (AirDrop, Files, Drive) or save it to the phone.
-4. On your computer, unzip it and pick the folder in the extension's **Bulk upload** tab. Fill any blanks (title, category, condition) in `items.csv` first: the bulk upload needs them.
+4. On your computer, open the extension's **Bulk upload** tab and click **Choose zip…** (or drag the zip onto the panel). Blank titles, descriptions, categories and so on can be filled by **✨ Draft all with Claude** in the extension, or typed into the preview table. Only the price has to come from you.
 
 Photos are saved as JPGs, max 1600px, so iPhone HEIC photos work. Everything stays on the phone: nothing is uploaded anywhere until you share the zip.
 

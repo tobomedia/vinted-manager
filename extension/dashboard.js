@@ -1,6 +1,7 @@
 import { DEFAULT_SETTINGS, normalizeItem, isStale, newPrice, randomDelayMs, summarize, sortItems, makeBackup, parseBackup, backupFilename, backupSummary } from './logic.js';
 import { api, IN_EXT, MOCK } from './api.js';
 import { initUpload } from './upload.js';
+import { AI_MODELS } from './ai.js';
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const gbp = (n) => '£' + n.toFixed(2);
@@ -34,7 +35,9 @@ function log(msg, cls = '') {
 // ---------- render ----------
 function visible() {
   const s = state.settings, q = state.q.toLowerCase();
-  let list = state.items.filter((i) => i.status !== 'sold' && i.status !== 'draft');
+  let list = state.filter === 'drafts'
+    ? state.items.filter((i) => i.status === 'draft')
+    : state.items.filter((i) => i.status !== 'sold' && i.status !== 'draft');
   if (state.filter === 'all') list = list.filter((i) => i.status === 'active');
   if (state.filter === 'stale') list = list.filter((i) => isStale(i, s));
   if (state.filter === 'other') list = list.filter((i) => i.status !== 'active');
@@ -52,6 +55,8 @@ function render() {
     ['Wardrobe value', gbp(sum.value)],
   ].map(([k, v, c = '']) => `<div class="tile ${c}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
 
+  const drafts = state.items.filter((i) => i.status === 'draft').length;
+  $('draftsChip').textContent = drafts ? `Drafts (${drafts})` : 'Drafts';
   const list = visible();
   $('rows').innerHTML = list.map((i) => {
     const stale = isStale(i, s);
@@ -300,13 +305,18 @@ async function doSettings() {
     <p class="note">Random pause between bulk actions, so it doesn't look like a bot.</p>
     <div class="row"><div><label for="dmin">Min delay (s)</label><input id="dmin" type="number" min="5" value="${s.delayMinSec}"></div>
     <div><label for="dmax">Max delay (s)</label><input id="dmax" type="number" min="5" value="${s.delayMaxSec}"></div></div>
-    <label><input id="dry" type="checkbox" ${s.dryRun ? 'checked' : ''}> Dry run (log actions without changing anything)</label>`, 'Save');
+    <label><input id="dry" type="checkbox" ${s.dryRun ? 'checked' : ''}> Dry run (log actions without changing anything)</label>
+    <h3>Claude drafting (bulk upload)</h3>
+    <p class="note">Fills blank titles, descriptions, categories and so on from each item's photos and notes. Uses your own Anthropic API key from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>, billed to your Anthropic account. The key stays in this browser and is only sent to Anthropic.</p>
+    <label for="aiKey">Anthropic API key</label><input id="aiKey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" value="${esc(s.aiKey || '')}">
+    <label for="aiModel">Model</label><select id="aiModel">${AI_MODELS.map((m) => `<option value="${m.id}" ${m.id === s.aiModel ? 'selected' : ''}>${esc(m.label)}</option>`).join('')}</select>`, 'Save');
   if (!ok) return;
   const num = (id, d) => (Number.isFinite(+$(id).value) && $(id).value !== '' ? +$(id).value : d);
   state.settings = {
     staleDays: num('sd', s.staleDays), staleViews: num('sv', s.staleViews),
     delayMinSec: Math.max(5, num('dmin', s.delayMinSec)), delayMaxSec: Math.max(5, num('dmax', s.delayMaxSec)),
     dryRun: $('dry').checked,
+    aiKey: $('aiKey').value.trim(), aiModel: $('aiModel').value,
   };
   await store.set(state.settings);
   log('Settings saved', 'ok');
