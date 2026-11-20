@@ -202,7 +202,7 @@ async function doDelete() {
     targets = items.filter((i) => saved.has(i.id));
     if (!targets.length) return;
   }
-  await runBulk('Delete', targets, async (it) => { await api.deleteItem(it.id); }, { stage: $('bk').checked ? '2 of 2' : '' });
+  await runBulk('Delete', targets, async (it) => { await api.deleteItem(it.id, { draft: it.status === 'draft' }); }, { stage: $('bk').checked ? '2 of 2' : '' });
 }
 
 // ---------- backup / restore ----------

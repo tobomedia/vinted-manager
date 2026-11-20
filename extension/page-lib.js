@@ -95,8 +95,15 @@
   }
 
   // ---- writes ----
-  async function deleteItem(id) {
-    await req('POST', `/api/v2/items/${id}/delete`);
+  // Live listings: Vinted's normal delete. Drafts have their own endpoint, which
+  // Vinted's site calls on its core API host (the www host answers 400).
+  async function deleteItem(id, opts = {}) {
+    if (!opts.draft) {
+      await req('POST', `/api/v2/items/${id}/delete`);
+      return { deleted: id };
+    }
+    const core = location.origin.replace('://www.', '://core.');
+    await req('DELETE', `${core}/api/v2/item_upload/drafts/${id}`);
     return { deleted: id };
   }
 
