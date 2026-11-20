@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Vinted Companion</title>
+  <meta name="theme-color" content="#09827e" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Companion" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <!-- Items list -->
+  <section id="v-list" class="view">
+    <header class="bar">
+      <h1>Items <span id="count" class="muted"></span></h1>
+      <button id="exportBtn" class="ghost">Export</button>
+    </header>
+    <p id="installTip" class="tip" hidden></p>
+    <ul id="items" class="items"></ul>
+    <p id="empty" class="empty" hidden>No items yet.<br />Tap <b>New item</b> and take some photos.</p>
+    <footer class="dock"><button id="newBtn" class="primary wide">+ New item</button></footer>
+  </section>
+
+  <!-- Add / edit an item -->
+  <section id="v-edit" class="view" hidden>
+    <header class="bar">
+      <button id="backBtn" class="ghost">‹ Items</button>
+      <h1 id="editTitle">New item</h1>
+      <span id="saved" class="saved muted" aria-live="polite"></span>
+    </header>
+    <div class="photo-actions">
+      <label class="btn primary">📷 Take photo<input id="camera" type="file" accept="image/*" capture="environment" class="vh" /></label>
+      <label class="btn">🖼 Choose photos<input id="library" type="file" accept="image/*" multiple class="vh" /></label>
+    </div>
+    <p id="photoMsg" class="msg" aria-live="polite" hidden></p>
+    <ul id="photos" class="photos"></ul>
+    <div id="photoTools" class="photo-tools" hidden>
+      <button data-act="left">‹ Earlier</button>
+      <button data-act="cover">Make cover</button>
+      <button data-act="right">Later ›</button>
+      <button data-act="remove" class="danger-text">Remove</button>
+    </div>
+    <form id="form" class="form" autocomplete="off" onsubmit="return false">
+      <label>Title<input name="title" placeholder="Optional – can be filled in later" /></label>
+      <div class="row">
+        <label>Price (£)<input name="price" inputmode="decimal" placeholder="e.g. 12" /></label>
+        <label>Condition<select name="condition" id="conditionSel"></select></label>
+      </div>
+      <div class="row">
+        <label>Brand<input name="brand" autocapitalize="words" /></label>
+        <label>Size<input name="size" placeholder="e.g. M, 10, UK 7" /></label>
+      </div>
+      <label>Notes<textarea name="notes" rows="3" placeholder="Marks, measurements, fit, anything worth mentioning"></textarea></label>
+      <details>
+        <summary>More details</summary>
+        <label>Description<textarea name="description" rows="4"></textarea></label>
+        <label>Category<input name="category" placeholder="e.g. Women > Clothing > Dresses" /></label>
+        <div class="row">
+          <label>Colour<input name="colour" placeholder="e.g. Blue" /></label>
+          <label>Parcel size<select name="parcel" id="parcelSel"></select></label>
+        </div>
+      </details>
+    </form>
+    <footer class="dock">
+      <button id="delBtn" class="ghost danger-text">Delete</button>
+      <button id="doneBtn" class="ghost">Done</button>
+      <button id="nextBtn" class="primary">Save + next</button>
+    </footer>
+  </section>
+
+  <!-- Export -->
+  <section id="v-export" class="view" hidden>
+    <header class="bar">
+      <button id="exportBack" class="ghost">‹ Items</button>
+      <h1>Export</h1>
+      <span></span>
+    </header>
+    <div id="exportSummary" class="card"></div>
+    <div class="card">
+      <button id="prepareBtn" class="primary wide">Create zip</button>
+      <button id="shareBtn" class="primary wide" hidden>Share zip…</button>
+      <a id="downloadLink" class="link" hidden>Or save it to this phone</a>
+      <p id="exportMsg" class="msg" aria-live="polite" hidden></p>
+    </div>
+    <div id="clearBox" class="card" hidden>
+      <p>Once the zip is safely on your computer, you can remove these items from the phone.</p>
+      <button id="clearBtn" class="ghost danger-text wide">Remove exported items</button>
+    </div>
+    <p class="muted small">On your computer: unzip it, then in the extension open <b>Bulk upload</b> and pick the folder.</p>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
