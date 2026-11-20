@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vinted Manager</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Vinted Manager</h1>
+      <p class="sub" id="who">Not loaded</p>
+    </div>
+    <div class="top-actions">
+      <span class="badge mock" id="mockBadge" hidden>Demo data</span>
+      <span class="badge dry" id="dryBadge" hidden>Dry run on</span>
+      <button id="diagnoseBtn" class="ghost">Check connection</button>
+      <button id="restoreBtn" class="ghost">Restore backup</button>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden />
+      <button id="settingsBtn" class="ghost">Settings</button>
+      <button id="refreshBtn">Refresh</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab on" data-view="wardrobe">Wardrobe</button>
+    <button class="tab" data-view="upload">Bulk upload</button>
+  </nav>
+
+  <main id="view-wardrobe" class="view">
+  <section class="tiles" id="tiles"></section>
+
+  <section class="toolbar">
+    <div class="filters" role="tablist">
+      <button data-filter="all" class="chip on">All active</button>
+      <button data-filter="stale" class="chip">Underperforming</button>
+      <button data-filter="other" class="chip">Hidden / reserved</button>
+    </div>
+    <input id="search" type="search" placeholder="Search titles…" />
+  </section>
+
+  <section class="bulkbar" id="bulkbar" hidden>
+    <strong id="selCount">0 selected</strong>
+    <button id="relistBtn">Relist (bump)</button>
+    <button id="priceBtn">Change price</button>
+    <button id="exportBtn">Export backup</button>
+    <button id="deleteBtn" class="danger">Delete</button>
+    <button id="clearSel" class="ghost">Clear</button>
+  </section>
+
+  <div class="tablewrap">
+    <table id="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="selAll" aria-label="Select all" /></th>
+          <th></th>
+          <th data-sort="title">Item</th>
+          <th data-sort="price" class="num">Price</th>
+          <th data-sort="views" class="num">Views</th>
+          <th data-sort="favs" class="num">Favs</th>
+          <th data-sort="viewsPerDay" class="num">Views/day</th>
+          <th data-sort="ageDays" class="num">Age</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="empty" id="empty" hidden>No items match.</p>
+  </div>
+  </main>
+
+  <main id="view-upload" class="view" hidden>
+    <section class="upload-intro">
+      <div>
+        <h2>Bulk upload as drafts</h2>
+        <p class="note">Choose one folder that contains <code>items.csv</code> and a sub-folder of photos for each item. Items are saved as <b>drafts</b>. You review and publish them in the Vinted app.</p>
+        <pre class="tree">my-items/
+├── items.csv
+├── levi-jeans/   1.jpg 2.jpg 3.jpg
+└── nike-air-max/ 1.jpg 2.jpg</pre>
+      </div>
+      <div class="upload-actions">
+        <label class="pick">
+          <input type="file" id="folderInput" webkitdirectory multiple hidden />
+          <span>Choose folder…</span>
+        </label>
+        <button id="templateBtn" class="ghost">Download CSV template</button>
+      </div>
+    </section>
+    <section id="uploadSummary" class="upload-summary" hidden>
+      <span id="uploadCounts"></span>
+      <button id="recheckBtn" class="ghost">Re-pick folder</button>
+      <button id="uploadBtn">Upload ready items as drafts</button>
+    </section>
+    <div class="tablewrap" id="previewWrap" hidden>
+      <table>
+        <thead><tr><th>Row</th><th>Photos</th><th>Title</th><th class="num">Price</th><th>Category</th><th>Brand</th><th>Size</th><th>Condition</th><th>Colour</th><th>Parcel</th><th>Status</th></tr></thead>
+        <tbody id="previewRows"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <section class="log">
+    <div class="log-head"><h2>Activity</h2><span id="status" class="status" role="status" aria-live="polite" hidden></span><button id="stopBtn" class="danger" hidden>Stop</button></div>
+    <div id="progress" class="progress" hidden><div id="progressBar"></div></div>
+    <ol id="log"></ol>
+  </section>
+
+  <dialog id="modal">
+    <form method="dialog" id="modalForm">
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+      <menu>
+        <button value="cancel" class="ghost">Cancel</button>
+        <button value="ok" id="modalOk">Confirm</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
